@@ -1,9 +1,14 @@
 .btn-volver{
-	margin: 15px;
-	padding: 1rem;
-	background-color: rgba(0, 0, 255, 0.445);
+	margin: 10px;
+	padding: .8rem;
+	background-color: rgba(94, 94, 211, 0.445);
 	color: white;
+	font-weight: 700;
 	border-radius: 1rem;
+	text-decoration: none;
+}
+.btn-volver:hover{
+	background-color:  #137c32;
 }
 .poster-container img{
 	width: 250px;

@@ -89,6 +89,9 @@ function mostrarActoresPrincipales(actores) {
       console.log("Animación jello-vertical aplicada a imagen de actor");
     });
   });
+
+
+configurarAnimacionScroll();  
 }
 
 // Función para mostrar los directores
