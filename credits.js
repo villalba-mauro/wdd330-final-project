@@ -2,7 +2,7 @@
 function cargarCreditosPelicula(movieId) {
   console.log("Cargando créditos para la película ID:", movieId);
   const API_KEY = '133de23faac16030d74a00fab6f5ace3';
-  const URL = `https://api.themoviedb.org/3/movie/${movieId}/credits?api_key=${API_KEY}&language=en-EN`;
+  const URL = `https://api.themoviedb.org/3/movie/${movieId}/credits?api_key=${API_KEY}&language=en-US`;
   
   fetch(URL)
     .then(response => response.json())
@@ -32,7 +32,7 @@ function mostrarActoresPrincipales(actores) {
   container.className = 'actores-container';
   
   const titulo = document.createElement('h2');
-  titulo.textContent = 'Reparto principal';
+  titulo.textContent = 'Main Cast';
   container.appendChild(titulo);
   
   const actoresGrid = document.createElement('div');

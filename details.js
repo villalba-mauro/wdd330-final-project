@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Cargar los detalles de la película
 function cargarDetallesPelicula(movieId) {
-  const URL = `https://api.themoviedb.org/3/movie/${movieId}?api_key=${API_KEY}&language=en-EN`;
+  const URL = `https://api.themoviedb.org/3/movie/${movieId}?api_key=${API_KEY}&language=en-US`;
   
   fetch(URL)
     .then(response => response.json())
@@ -32,6 +32,7 @@ function cargarDetallesPelicula(movieId) {
     });
 }
 
+// Esta función debe reemplazar la sección correspondiente en details.js
 // Mostrar los detalles de la película en la página
 function mostrarDetallesPelicula(pelicula) {
   // Actualizar el título de la página
@@ -61,36 +62,37 @@ function mostrarDetallesPelicula(pelicula) {
         ${pelicula.tagline ? `<div class="tagline-container"><p class="tagline">${pelicula.tagline}</p></div>` : ''}
         
         <div class="seccion">
-          <h3>Sinopsis</h3>
+          <h3>Synopsis</h3>
           <p class="sinopsis">${pelicula.overview || 'No hay sinopsis disponible.'}</p>
         </div>
         
         <div class="meta-info">
           <div class="dato">
-            <strong>Fecha de estreno:</strong>
+            <strong>Relase date:</strong>
             <span>${formatearFecha(pelicula.release_date)}</span>
           </div>
           
           <div class="dato">
-            <strong>Valoración:</strong>
+            <strong>Rating:</strong>
             <span>${pelicula.vote_average.toFixed(1)}/10</span>
           </div>
           
           <div class="dato">
-            <strong>Duración:</strong>
+            <strong>Runtime:</strong>
             <span>${pelicula.runtime} minutos</span>
           </div>
           
           <div class="dato">
-            <strong>Géneros:</strong>
+            <strong>Genres:</strong>
             <span>${pelicula.genres.map(genero => genero.name).join(', ')}</span>
           </div>
         </div>
+        <button class="fav-movie" data-id="${pelicula.id}">Add to favorite</button>
       </div>
     </div>
     
     <div id="similares-container" class="similares-container oculto">
-      <h2>Películas similares</h2>
+      <h2>Similar movies</h2>
       <div id="similares-peliculas" class="similares-grid"></div>
     </div>
   `;
@@ -100,11 +102,68 @@ function mostrarDetallesPelicula(pelicula) {
   
   // Mostrar el contenedor principal
   detallesContainer.classList.remove('oculto');
+
+  // Verificar si la película ya está en favoritos para cambiar el texto del botón
+  const btnFavorito = document.querySelector('.fav-movie');
+  if (btnFavorito) {
+    // Función para actualizar el estado del botón
+    function actualizarEstadoBoton() {
+      try {
+        const favoritos = JSON.parse(localStorage.getItem('favoritosMovies')) || [];
+        const esFavorita = favoritos.some(p => p.id === pelicula.id);
+        
+        // Actualizar el texto y clase del botón
+        btnFavorito.textContent = esFavorita ? 'Remove from favourites' : 'Add to favourite';
+        
+        if (esFavorita) {
+          btnFavorito.classList.add('remove-fav');
+        } else {
+          btnFavorito.classList.remove('remove-fav');
+        }
+        console.log(`Película ${pelicula.id} - ${pelicula.title}, es favorita: ${esFavorita}`);
+      } catch (e) {
+        console.error("Error al verificar favoritos:", e);
+      }
+    }
+    
+    // Actualizar estado inicial
+    actualizarEstadoBoton();
+    
+    btnFavorito.addEventListener('click', function () {
+      if (typeof agregarAFavoritos !== 'function') {
+        alert("La función de favoritos no está cargada correctamente.");
+        return;
+      }
+    
+      const favoritos = JSON.parse(localStorage.getItem('favoritosMovies')) || [];
+      const esFavorita = favoritos.some(p => p.id === pelicula.id);
+    
+      if (esFavorita) {
+        eliminarDeFavoritos(pelicula.id);
+        actualizarEstadoBoton();
+      } else {
+        const peliculaData = {
+          id: pelicula.id,
+          title: pelicula.title,
+          poster_path: pelicula.poster_path,
+          release_date: pelicula.release_date,
+          vote_average: pelicula.vote_average
+        };
+    
+        if (agregarAFavoritos(peliculaData)) {
+          actualizarEstadoBoton();
+        }
+      }
+    
+      animarBotonFavorito(this);
+    });
+    
+  }
 }
 
 // Cargar películas similares
 function cargarPeliculasSimilares(movieId) {
-  const URL = `https://api.themoviedb.org/3/movie/${movieId}/similar?api_key=${API_KEY}&language=es-ES&page=1`;
+  const URL = `https://api.themoviedb.org/3/movie/${movieId}/similar?api_key=${API_KEY}&language=us-US&page=1`;
   
   fetch(URL)
     .then(response => response.json())
