@@ -170,7 +170,7 @@ function cargarPeliculasSimilares(movieId) {
     .then(response => response.json())
     .then(data => {
       if (data.results && data.results.length > 0) {
-        mostrarPeliculasSimilares(data.results.slice(0, 4)); // Mostrar solo 4 películas similares
+        mostrarPeliculasSimilares(data.results.slice(0, 6)); // Mostrar solo 6 películas similares
       } else {
         document.getElementById('similares-container').style.display = 'none';
       }
