@@ -1,8 +1,3 @@
-// 
-////////////////////////////
-
-
-// Este archivo asegura que las funciones de favoritos estén disponibles en todas las páginas
 
 // Verificar si las funciones de favoritos ya están definidas
 if (typeof agregarAFavoritos !== 'function') {

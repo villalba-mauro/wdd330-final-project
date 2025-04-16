@@ -1,4 +1,3 @@
-
 // Variables globales
 const API_KEY = '133de23faac16030d74a00fab6f5ace3';
 
@@ -11,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (movieId) {
     cargarDetallesPelicula(movieId);
   } else {
-    mostrarError('No se encontró el ID de la película');
+    mostrarError('Movie ID not found');
   }
 });
 
@@ -28,7 +27,7 @@ function cargarDetallesPelicula(movieId) {
     })
     .catch(error => {
       console.error('Error al cargar los detalles:', error);
-      mostrarError('Error al cargar los detalles de la película');
+      mostrarError('Error loading movie details');
     });
 }
 
@@ -36,7 +35,7 @@ function cargarDetallesPelicula(movieId) {
 // Mostrar los detalles de la película en la página
 function mostrarDetallesPelicula(pelicula) {
   // Actualizar el título de la página
-  document.title = `${pelicula.title} - Detalles de la película`;
+  document.title = `${pelicula.title} - Movie Details`;
   
   // Actualizar la imagen de fondo
   if (pelicula.backdrop_path) {
@@ -63,12 +62,12 @@ function mostrarDetallesPelicula(pelicula) {
         
         <div class="seccion">
           <h3>Synopsis</h3>
-          <p class="sinopsis">${pelicula.overview || 'No hay sinopsis disponible.'}</p>
+          <p class="sinopsis">${pelicula.overview || 'No synopsis available.'}</p>
         </div>
         
         <div class="meta-info">
           <div class="dato">
-            <strong>Relase date:</strong>
+            <strong>Release date:</strong>
             <span>${formatearFecha(pelicula.release_date)}</span>
           </div>
           
@@ -79,7 +78,7 @@ function mostrarDetallesPelicula(pelicula) {
           
           <div class="dato">
             <strong>Runtime:</strong>
-            <span>${pelicula.runtime} minutos</span>
+            <span>${pelicula.runtime} minutes</span>
           </div>
           
           <div class="dato">
@@ -87,7 +86,7 @@ function mostrarDetallesPelicula(pelicula) {
             <span>${pelicula.genres.map(genero => genero.name).join(', ')}</span>
           </div>
         </div>
-        <button class="fav-movie" data-id="${pelicula.id}">Add to favorite</button>
+        <button id="fav-${pelicula.id}" class="fav-movie toggle-button" data-id="${pelicula.id}">Add to favorite</button>
       </div>
     </div>
     
@@ -115,14 +114,16 @@ function mostrarDetallesPelicula(pelicula) {
         // Actualizar el texto y clase del botón
         btnFavorito.textContent = esFavorita ? 'Remove from favourites' : 'Add to favourite';
         
+        // Actualizar la clase para cambiar el hover cuando esté en favoritos
         if (esFavorita) {
-          btnFavorito.classList.add('remove-fav');
+          btnFavorito.classList.add('alternate'); // Esto hará que el hover sea rojo
         } else {
-          btnFavorito.classList.remove('remove-fav');
+          btnFavorito.classList.remove('alternate'); // Esto hará que el hover sea verde
         }
-        console.log(`Película ${pelicula.id} - ${pelicula.title}, es favorita: ${esFavorita}`);
+        
+        console.log(`Movie ${pelicula.id} - ${pelicula.title}, is favorite: ${esFavorita}`);
       } catch (e) {
-        console.error("Error al verificar favoritos:", e);
+        console.error("Error checking favorites:", e);
       }
     }
     
@@ -131,7 +132,7 @@ function mostrarDetallesPelicula(pelicula) {
     
     btnFavorito.addEventListener('click', function () {
       if (typeof agregarAFavoritos !== 'function') {
-        alert("La función de favoritos no está cargada correctamente.");
+        alert("The favorites function is not loaded correctly.");
         return;
       }
     
@@ -163,7 +164,7 @@ function mostrarDetallesPelicula(pelicula) {
 
 // Cargar películas similares
 function cargarPeliculasSimilares(movieId) {
-  const URL = `https://api.themoviedb.org/3/movie/${movieId}/similar?api_key=${API_KEY}&language=us-US&page=1`;
+  const URL = `https://api.themoviedb.org/3/movie/${movieId}/similar?api_key=${API_KEY}&language=en-US&page=1`;
   
   fetch(URL)
     .then(response => response.json())
@@ -175,7 +176,7 @@ function cargarPeliculasSimilares(movieId) {
       }
     })
     .catch(error => {
-      console.error('Error al cargar películas similares:', error);
+      console.error('Error loading similar movies:', error);
       document.getElementById('similares-container').style.display = 'none';
     });
 }
@@ -202,12 +203,12 @@ function mostrarPeliculasSimilares(peliculas) {
     container.innerHTML = contenidoHTML;
     document.getElementById('similares-container').classList.remove('oculto');
 
-        // Llamar a configurarEventosAnimacion después de añadir las películas al DOM
-        if (typeof configurarEventosAnimacion === 'function') {
-          configurarEventosAnimacion();
-        } else {
-          console.error('La función configurarEventosAnimacion no está definida');
-        }
+    // Llamar a configurarEventosAnimacion después de añadir las películas al DOM
+    if (typeof configurarEventosAnimacion === 'function') {
+      configurarEventosAnimacion();
+    } else {
+      console.error('Function configurarEventosAnimacion is not defined');
+    }
   } else {
     document.getElementById('similares-container').style.display = 'none';
   }
@@ -218,7 +219,7 @@ function mostrarError(mensaje) {
   const container = document.getElementById('detalles-container');
   container.innerHTML = `
     <div class="error-mensaje">
-      <h2>¡Ups! Algo salió mal</h2>
+      <h2>Oops! Something went wrong</h2>
       <p>${mensaje}</p>
       <a href="index.html" class="btn-volver">Back to Menu</a>
     </div>
@@ -228,10 +229,10 @@ function mostrarError(mensaje) {
 
 // Función auxiliar para formatear fechas
 function formatearFecha(fechaStr) {
-  if (!fechaStr) return 'Fecha desconocida';
+  if (!fechaStr) return 'Unknown date';
   
   const fecha = new Date(fechaStr);
-  return fecha.toLocaleDateString('es-ES', {
+  return fecha.toLocaleDateString('en-US', {
     day: 'numeric',
     month: 'long',
     year: 'numeric'
